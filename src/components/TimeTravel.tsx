@@ -27,7 +27,7 @@ export const TimeTravel = () => {
         className="range range-xs"
         value={rangeValue}
         step="10"
-        onChange={(e) => setRangeValue(parseInt(e.currentTarget.value))}
+        onChange={(e) => setRangeValue(parseInt(e.currentTarget.value, 10))}
       />
       <div className="w-full flex justify-between text-xs px-2">
         {Array.from({ length: 11 }).map((_, index) => (

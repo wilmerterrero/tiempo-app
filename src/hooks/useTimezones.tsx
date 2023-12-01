@@ -1,6 +1,6 @@
+import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api";
 import { isArray } from "lodash-es";
-import { useState, useEffect } from "react";
 
 type ITimezone = {
   id: string;

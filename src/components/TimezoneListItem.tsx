@@ -1,14 +1,14 @@
-import { useState } from "preact/hooks";
 import { forwardRef } from "preact/compat";
-
-import { DeleteIcon } from "./icons/delete";
-import { FavoriteIcon } from "./icons/favorite";
-import { Moon } from "./icons/moon";
-import { Sun } from "./icons/sun";
-import { FavoriteLightIcon } from "./icons/favorite-light";
-import { DeleteLightIcon } from "./icons/delete-light";
+import { useState } from "preact/hooks";
 
 import { calculateTimeFromOffset, isNight } from "../utils";
+
+import { DeleteIcon } from "./icons/delete";
+import { DeleteLightIcon } from "./icons/delete-light";
+import { FavoriteIcon } from "./icons/favorite";
+import { FavoriteLightIcon } from "./icons/favorite-light";
+import { Moon } from "./icons/moon";
+import { Sun } from "./icons/sun";
 
 type TimezoneListItemProps = {
   timezone: Timezone;
@@ -22,7 +22,7 @@ export const TimezoneListItem = forwardRef<
   const [isHovering, setIsHovering] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
-  const isDark = theme === "dark";
+  const isLightTheme = theme === "light";
 
   return (
     <li
@@ -42,7 +42,7 @@ export const TimezoneListItem = forwardRef<
             type="text"
             value={timezone.name}
             onChange={(e) => console.log(e.currentTarget.value)}
-            className="input input-bordered join-item input-sm w-[250px] focus:outline-none"
+            className="input input-bordered input-sm bg-transparent w-[250px] focus:outline-none"
           />
         ) : (
           <p class="max-w-[245px] truncate cursor-pointer font-medium">
@@ -62,10 +62,10 @@ export const TimezoneListItem = forwardRef<
           </p>
           <div className="tooltip tooltip-left" data-tip="Mark as favorite">
             <button className="pt-1">
-              {isDark ? (
-                <FavoriteIcon isFavorite={timezone.isFavorite} />
-              ) : (
+              {isLightTheme ? (
                 <FavoriteLightIcon isFavorite={timezone.isFavorite} />
+              ) : (
+                <FavoriteIcon isFavorite={timezone.isFavorite} />
               )}
             </button>
           </div>
@@ -75,7 +75,7 @@ export const TimezoneListItem = forwardRef<
                 className="pt-1"
                 onClick={() => console.log("Delete", timezone.id)}
               >
-                {isDark ? <DeleteIcon /> : <DeleteLightIcon />}
+                {isLightTheme ? <DeleteLightIcon /> : <DeleteIcon />}
               </button>
             </div>
           )}

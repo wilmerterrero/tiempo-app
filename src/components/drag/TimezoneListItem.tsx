@@ -1,15 +1,14 @@
-import { useState } from "preact/hooks";
 import { forwardRef } from "preact/compat";
+import { useState } from "preact/hooks";
 
-import { DeleteIcon } from "./icons/delete";
-import { FavoriteIcon } from "./icons/favorite";
-import { Moon } from "./icons/moon";
-import { Sun } from "./icons/sun";
-import { FavoriteLightIcon } from "./icons/favorite-light";
-import { DeleteLightIcon } from "./icons/delete-light";
-
-import { calculateTimeFromOffset, isNight } from "../utils";
-import { DragBarsIcon } from "./icons/drag-bars";
+import { calculateTimeFromOffset, isNight } from "../../utils";
+import { DeleteIcon } from "../icons/delete";
+import { DeleteLightIcon } from "../icons/delete-light";
+import { DragBarsIcon } from "../icons/drag-bars";
+import { FavoriteIcon } from "../icons/favorite";
+import { FavoriteLightIcon } from "../icons/favorite-light";
+import { Moon } from "../icons/moon";
+import { Sun } from "../icons/sun";
 
 type TimezoneListItemProps = {
   timezone: Timezone;

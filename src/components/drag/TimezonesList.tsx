@@ -1,7 +1,9 @@
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
-import { handleDragEnd } from "../utils";
+
+import { useTheme } from "../../hooks/useTheme";
+import { handleDragEnd } from "../../utils";
+
 import { TimezoneListItem } from "./TimezoneListItem";
-import { useTheme } from "../hooks/useTheme";
 
 type TimezonesListProps = {
   timezones: Timezone[];

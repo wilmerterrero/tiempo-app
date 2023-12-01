@@ -4,7 +4,7 @@
 )]
 
 use log::info;
-use tauri::{Manager, SystemTray, SystemTrayEvent, SystemTrayMenu};
+use tauri::{Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, Window, WindowEvent};
 use tauri_plugin_positioner::{Position, WindowExt};
 use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial};
 
@@ -14,6 +14,11 @@ fn main() {
         .setup(|app| Ok(app.set_activation_policy(tauri::ActivationPolicy::Accessory)))
         .plugin(tauri_plugin_positioner::init())
         .system_tray(SystemTray::new().with_menu(system_tray_menu))
+        // detect on window event
+        .on_window_event(|event| match event.event() {
+            WindowEvent::ThemeChanged(_) => theme_changed(event.window()),
+            _ => {}
+        })
         .on_system_tray_event(|app, event| {
             tauri_plugin_positioner::on_tray_event(app, &event);
 
@@ -81,6 +86,10 @@ fn open_menu(app: &tauri::AppHandle) {
         window.show().unwrap();
         window.set_focus().unwrap();
     }
+}
+
+fn theme_changed(window: &Window) {
+    window.emit("theme_changed", ()).unwrap();
 }
 
 #[tauri::command]

@@ -1,22 +1,29 @@
+import { initDB } from "react-indexed-db-hook";
 import { invoke } from "@tauri-apps/api";
-import { useState, useEffect, useRef } from "preact/hooks";
-import PerfectScrollbar from "perfect-scrollbar";
+import { listen } from "@tauri-apps/api/event";
 import debounce from "lodash-es/debounce";
+import isEmpty from "lodash-es/isEmpty";
+import PerfectScrollbar from "perfect-scrollbar";
+import { ChangeEvent } from "preact/compat";
+import { useEffect, useRef, useState } from "preact/hooks";
 
-import { TimezonesList } from "./components/TimezonesList";
-import useTimezones from "./hooks/useTimezones";
+import { CloseIcon } from "./components/icons/close";
 import { SearchIcon } from "./components/icons/search";
 import { StatusesFooter } from "./components/StatusesFooter";
+import { TimeTravel } from "./components/TimeTravel";
+import { TimezonesList } from "./components/TimezonesList";
+import { DBConfig } from "./db/config";
+import useDB from "./db/useDB";
+import useTimezones from "./hooks/useTimezones";
+import { mockTimezones } from "./mocks";
 
 import "perfect-scrollbar/css/perfect-scrollbar.css";
 
-import { mockTimezones } from "./mocks";
-import { TimeTravel } from "./components/TimeTravel";
-import { CloseIcon } from "./components/icons/close";
-import { ChangeEvent } from "preact/compat";
+initDB(DBConfig);
 
 function App() {
-  const [timezones, setTimezones] = useState(mockTimezones);
+  const { fetchTimezones } = useDB();
+  const [timezones, setTimezones] = useState<Timezone[] | []>([]);
   const [searchTerm, setSearchTerm] = useState("");
   // Needed to update the time every minute
   const [_, setTick] = useState(new Date());
@@ -30,6 +37,20 @@ function App() {
 
   const timezonesListRef = useRef(null);
   const resultsListRef = useRef(null);
+
+  useEffect(() => {
+    const getTimezones = async () => {
+      const _timezones = await fetchTimezones();
+      if (isEmpty(_timezones) || !_timezones) {
+        setTimezones(mockTimezones);
+        return;
+      }
+
+      setTimezones(_timezones);
+    };
+    getTimezones();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (!timezonesListRef.current) return;
@@ -56,6 +77,15 @@ function App() {
       ps.destroy();
     };
   }, [resultsListRef]);
+
+  useEffect(() => {
+    const listenThemeEvent = async () => {
+      await listen("theme_changed", () => {
+        window.location.reload();
+      });
+    };
+    listenThemeEvent();
+  }, []);
 
   useEffect(() => {
     const updateTime = () => {
@@ -108,17 +138,26 @@ function App() {
 
   return (
     <main class="container mx-auto px-2 pt-4 flex flex-col justify-center items-center">
-      <input
-        type="text"
-        placeholder="Search timezones. Eg: New York"
-        className="input input-bordered join-item input-sm w-full mb-2 text-app-primary-color bg-transparent focus:outline-none"
-        value={searchTerm}
-        onChange={handleSearchChange}
-      />
+      <div className="flex-1 w-full px-2">
+        <input
+          type="text"
+          placeholder="Search timezones. Eg: New York"
+          className="input input-bordered border-[#e2e2e2] join-item input-sm w-full mb-2 text-app-primary-color bg-transparent focus:outline-none"
+          value={searchTerm}
+          onChange={handleSearchChange}
+        />
+      </div>
+      <button
+        type="submit"
+        class="absolute right-2 top-0 mt-[22px] mr-5"
+        onClick={resultsListRef.current ? handleCancelSearch : void 0}
+      >
+        {resultsListRef.current ? <CloseIcon /> : <SearchIcon />}
+      </button>
       {fetchedTimezones && fetchedTimezones.length > 0 ? (
         <div className="absolute top-14 w-full px-2 z-50">
           <ul
-            className="flex flex-col space-y-2 relative max-h-56 bg-slate-800 px-4 h-56 pt-2 rounded-md"
+            className="flex flex-col space-y-2 relative max-h-56 bg-slate-600 px-4 h-56 pt-2 rounded-md"
             ref={resultsListRef}
           >
             {fetchedTimezones.map((tz) => (
@@ -132,24 +171,16 @@ function App() {
           </ul>
         </div>
       ) : null}
-      <button
-        type="submit"
-        class="absolute right-2 top-0 mt-[22px] mr-4"
-        onClick={resultsListRef.current ? handleCancelSearch : changeTitle}
-      >
-        {resultsListRef.current ? <CloseIcon /> : <SearchIcon />}
-      </button>
       <div className="max-h-56 relative w-full" ref={timezonesListRef}>
-        <TimezonesList timezones={timezones} setTimezones={setTimezones} />
+        <TimezonesList timezones={timezones} />
       </div>
-      <div className="flex flex-col w-full px-2 divide-y space-y-2 divide-slate-400">
+      <div className="flex flex-col w-full px-4 divide-y space-y-2 divide-slate-400">
         <TimeTravel />
-        <div className="flex justify-between pt-6">
+        <div className="flex justify-between pt-4">
           <p class="text-sm font-medium">Options</p>
           <p>+</p>
         </div>
       </div>
-
       <StatusesFooter loading={loading} error={!!error} />
     </main>
   );

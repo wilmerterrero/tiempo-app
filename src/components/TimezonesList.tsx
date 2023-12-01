@@ -1,9 +1,9 @@
-import { TimezoneListItem } from "./TimezoneListItem";
 import { useTheme } from "../hooks/useTheme";
+
+import { TimezoneListItem } from "./TimezoneListItem";
 
 type TimezonesListProps = {
   timezones: Timezone[];
-  setTimezones: (timezones: Timezone[]) => void;
 };
 
 export const TimezonesList = ({ timezones }: TimezonesListProps) => {
@@ -11,7 +11,7 @@ export const TimezonesList = ({ timezones }: TimezonesListProps) => {
   return (
     <ul class="px-1 flex-1 h-56">
       {timezones.map((timezone) => (
-        <TimezoneListItem timezone={timezone} theme={theme} />
+        <TimezoneListItem key={timezone.id} timezone={timezone} theme={theme} />
       ))}
     </ul>
   );

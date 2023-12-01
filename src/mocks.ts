@@ -1,27 +1,19 @@
 export const mockTimezones: Timezone[] = [
   {
     id: "1",
-    name: "Santo Domingo de los Colorados",
-    timeZone: "America/Los_Angeles",
-    isFavorite: true,
-    offSet: -8,
+    name: "New York (EDT)",
+    timeZone: "America/New_York",
+    isFavorite: false,
+    offSet: -5,
     order: 1,
   },
   {
     id: "2",
-    name: "Eastern Time",
-    timeZone: "America/New_York",
+    name: "London (BST)",
+    timeZone: "Europe/London",
     isFavorite: false,
-    offSet: -4,
+    offSet: 1,
     order: 2,
-  },
-  {
-    id: "3",
-    name: "Central Time",
-    timeZone: "America/Chicago",
-    isFavorite: false,
-    offSet: -6,
-    order: 3,
   },
 ];
 
