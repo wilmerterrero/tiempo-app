@@ -3,11 +3,15 @@
 @tailwind utilities;
 
 :root {
+  --fontPrimary: #e2e2e2;
+
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+  background: #00000044;
+  color: var(--fontPrimary);
 }
 
 html {
@@ -26,4 +30,9 @@ html {
 
 .tooltip::before {
   @apply z-50 !important;
+}
+
+.divider:before,
+.divider:after {
+  height: 0.086rem !important;
 }

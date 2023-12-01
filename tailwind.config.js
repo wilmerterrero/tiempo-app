@@ -2,7 +2,11 @@
 export default {
   content: ["./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        "text-app-primary-color": "#e2e2e2",
+      },
+    },
   },
   daisyui: {
     themes: ["dim", "light"],

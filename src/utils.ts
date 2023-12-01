@@ -46,20 +46,27 @@ export const handleDragEnd = ({
   }
 };
 
+const getOffsetTime = (offset: number) => {
+  // Create a date object for the current time in UTC
+  const targetTime = new Date();
+  //get the timezone offset from local time in minutes
+  const tzDifference = offset * 60 + targetTime.getTimezoneOffset();
+  //convert the offset to milliseconds, add to targetTime, and make a new Date
+  const offsetTime = new Date(targetTime.getTime() + tzDifference * 60 * 1000);
+
+  return offsetTime;
+};
+
 export const calculateTimeFromOffset = (offset: number) => {
-  const date = new Date();
-  const newTime =
-    offset >= 0 ? addHours(date, offset) : subHours(date, Math.abs(offset));
-  const formattedTime = format(newTime, "h:mm a");
+  const offsetTime = getOffsetTime(offset);
+  const formattedTime = format(offsetTime, "h:mm a");
 
   return formattedTime;
 };
 
 export const isNight = (offset: number) => {
-  const nowUtc = new Date();
-  const localTime =
-    offset >= 0 ? addHours(nowUtc, offset) : subHours(nowUtc, Math.abs(offset));
-  const hour = getHours(localTime);
+  const date = getOffsetTime(offset);
+  const hour = getHours(date);
 
   return hour < 6 || hour >= 18;
 };

@@ -6,6 +6,7 @@
 use log::info;
 use tauri::{Manager, SystemTray, SystemTrayEvent, SystemTrayMenu};
 use tauri_plugin_positioner::{Position, WindowExt};
+use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial};
 
 fn main() {
     let system_tray_menu = SystemTrayMenu::new();
@@ -70,6 +71,10 @@ fn open_menu(app: &tauri::AppHandle) {
     let window = app.get_window("main").unwrap();
     let _ = window.move_window(Position::TrayCenter);
 
+    #[cfg(target_os = "macos")]
+    apply_vibrancy(&window, NSVisualEffectMaterial::HudWindow, None, None)
+        .expect("Unsupported platform! 'apply_vibrancy' is only supported on macOS");
+
     if window.is_visible().unwrap() {
         window.hide().unwrap();
     } else {
@@ -103,5 +108,10 @@ async fn fetch_timezones(query: String) -> Result<String, String> {
 
 #[tauri::command]
 fn update_menu_title(app: tauri::AppHandle, title: &str) {
+    app.tray_handle()
+        .set_icon(tauri::Icon::Raw(
+            include_bytes!("../resources/empty.png").to_vec(),
+        ))
+        .unwrap();
     app.tray_handle().set_title(title).unwrap();
 }
