@@ -1,6 +1,6 @@
 import { initDB } from "react-indexed-db-hook";
 import { invoke } from "@tauri-apps/api";
-import { listen } from "@tauri-apps/api/event";
+import { listen, UnlistenFn } from "@tauri-apps/api/event";
 import debounce from "lodash-es/debounce";
 import isEmpty from "lodash-es/isEmpty";
 import PerfectScrollbar from "perfect-scrollbar";
@@ -22,7 +22,6 @@ import "perfect-scrollbar/css/perfect-scrollbar.css";
 initDB(DBConfig);
 
 function App() {
-  const { fetchTimezones } = useDB();
   const [timezones, setTimezones] = useState<Timezone[] | []>([]);
   const [searchTerm, setSearchTerm] = useState("");
   // Needed to update the time every minute
@@ -30,10 +29,13 @@ function App() {
 
   const {
     timezones: fetchedTimezones,
+    isSearchMode,
     loading,
     error,
     cancelSearch,
   } = useTimezones(searchTerm);
+
+  const { fetchTimezones, addTimezone } = useDB();
 
   const timezonesListRef = useRef(null);
   const resultsListRef = useRef(null);
@@ -79,12 +81,16 @@ function App() {
   }, [resultsListRef]);
 
   useEffect(() => {
+    let _unlisten: UnlistenFn;
     const listenThemeEvent = async () => {
-      await listen("theme_changed", () => {
+      _unlisten = await listen("theme_changed", () => {
         window.location.reload();
       });
     };
     listenThemeEvent();
+    return () => {
+      _unlisten();
+    };
   }, []);
 
   useEffect(() => {
@@ -136,6 +142,12 @@ function App() {
     debounceSearch(e.currentTarget.value);
   };
 
+  const handleAddTimezone = async (timezone: Timezone) => {
+    const result = await addTimezone(timezone);
+    if (!result) return;
+    setTimezones((prev) => [...prev, timezone]);
+  };
+
   return (
     <main class="container mx-auto px-2 pt-4 flex flex-col justify-center items-center">
       <div className="flex-1 w-full px-2">
@@ -145,17 +157,18 @@ function App() {
           className="input input-bordered border-[#e2e2e2] join-item input-sm w-full mb-2 text-app-primary-color bg-transparent focus:outline-none"
           value={searchTerm}
           onChange={handleSearchChange}
+          autoComplete="false"
         />
       </div>
       <button
         type="submit"
         class="absolute right-2 top-0 mt-[22px] mr-5"
-        onClick={resultsListRef.current ? handleCancelSearch : void 0}
+        onClick={isSearchMode ? handleCancelSearch : void 0}
       >
-        {resultsListRef.current ? <CloseIcon /> : <SearchIcon />}
+        {isSearchMode ? <CloseIcon /> : <SearchIcon />}
       </button>
-      {fetchedTimezones && fetchedTimezones.length > 0 ? (
-        <div className="absolute top-14 w-full px-2 z-50">
+      {isSearchMode ? (
+        <div className="absolute top-14 w-full px-4 z-50">
           <ul
             className="flex flex-col space-y-2 relative max-h-56 bg-slate-600 px-4 h-56 pt-2 rounded-md"
             ref={resultsListRef}
@@ -164,6 +177,17 @@ function App() {
               <li
                 key={tz.id}
                 className="text-xs font-bold text-white underline cursor-pointer"
+                onClick={() => {
+                  handleCancelSearch();
+                  handleAddTimezone({
+                    id: tz.id,
+                    name: tz.abbreviation,
+                    offSet: tz.offset,
+                    timeZone: tz.abbreviation,
+                    isFavorite: false,
+                    order: 0,
+                  });
+                }}
               >
                 {tz.name}
               </li>
@@ -172,7 +196,7 @@ function App() {
         </div>
       ) : null}
       <div className="max-h-56 relative w-full" ref={timezonesListRef}>
-        <TimezonesList timezones={timezones} />
+        <TimezonesList timezones={timezones} setTimezones={setTimezones} />
       </div>
       <div className="flex flex-col w-full px-4 divide-y space-y-2 divide-slate-400">
         <TimeTravel />

@@ -53,7 +53,9 @@ const useTimezones = (searchTerm: string) => {
     setTimezones([]);
   };
 
-  return { timezones, error, loading, cancelSearch };
+  const isSearchMode = timezones.length > 0;
+
+  return { timezones, isSearchMode, error, loading, cancelSearch };
 };
 
 export default useTimezones;
