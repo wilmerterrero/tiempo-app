@@ -83,6 +83,7 @@ export const TimezoneListItem = ({
         {isEditing ? (
           <TextInput
             mask={ONLY_TEXT_REGEX}
+            unmask={true}
             value={timezone.name}
             onAccept={(value) => handleOnEditName(value)}
           />

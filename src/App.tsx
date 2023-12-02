@@ -42,6 +42,7 @@ function App() {
 
   const timezonesListRef = useRef(null);
   const resultsListRef = useRef(null);
+  const inputSearchRef = useRef<HTMLInputElement>(null);
 
   const getFavoriteTimezonesTitle = useCallback(() => {
     const favorites = timezones.filter((timezone) => timezone.isFavorite);
@@ -165,6 +166,7 @@ function App() {
 
   const handleCancelSearch = () => {
     setSearchTerm("");
+    inputSearchRef.current?.value && (inputSearchRef.current.value = "");
     cancelSearch();
   };
 
@@ -182,6 +184,7 @@ function App() {
     <main class="container mx-auto px-2 pt-4 flex flex-col justify-center items-center">
       <div className="flex-1 w-full px-2 mb-2">
         <TextInput
+          inputRef={inputSearchRef}
           mask={ONLY_TEXT_REGEX}
           onAccept={(value) => handleSearchChange(value)}
           placeholder="Search timezones. Eg: New York"
