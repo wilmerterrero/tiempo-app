@@ -1,5 +1,6 @@
 import { HTMLAttributes } from "preact/compat";
 import { StateUpdater, useState } from "preact/hooks";
+import debounce from "lodash-es/debounce";
 
 import useDB from "../db/useDB";
 import { calculateTimeFromOffset, isNight } from "../utils";
@@ -10,6 +11,7 @@ import { FavoriteIcon } from "./icons/favorite";
 import { FavoriteLightIcon } from "./icons/favorite-light";
 import { Moon } from "./icons/moon";
 import { Sun } from "./icons/sun";
+import { ONLY_TEXT_REGEX, TextInput } from "./TextInput";
 
 type TimezoneListItemProps = {
   timezone: Timezone;
@@ -29,6 +31,23 @@ export const TimezoneListItem = ({
   const { deleteTimezone, updateTimezone } = useDB();
 
   const isLightTheme = theme === "light";
+
+  const onEditName = async (id: string, name: string) => {
+    await updateTimezone(id, { ...timezone, name });
+    setTimezones((prev: Timezone[]) =>
+      prev.map((timezone) => {
+        if (timezone.id === id) {
+          return { ...timezone, name };
+        }
+        return timezone;
+      })
+    );
+  };
+
+  const handleOnEditName = debounce((value: string) => {
+    if (!isEditing) return;
+    onEditName(timezone.id, value);
+  }, 300);
 
   const handleDelete = async (id: string) => {
     await deleteTimezone(id);
@@ -62,11 +81,10 @@ export const TimezoneListItem = ({
     >
       <div className="flex items-center space-x-2">
         {isEditing ? (
-          <input
-            type="text"
+          <TextInput
+            mask={ONLY_TEXT_REGEX}
             value={timezone.name}
-            onChange={(e) => console.log(e.currentTarget.value)}
-            className="input input-bordered input-sm bg-transparent w-[250px] focus:outline-none"
+            onAccept={(value) => handleOnEditName(value)}
           />
         ) : (
           <p class="max-w-[245px] truncate cursor-pointer font-medium">

@@ -16,7 +16,7 @@
       {
         "groups": [
           // Packages. `react`,  and related packages come first.
-          ["^react", "test-utils", "^@?\\w"],
+          ["^preact", "^tauri", "test-utils", "^@?\\w"],
           // Internal packages.
           ["^(@|@company|@ui|components|utils|config|vendored-lib)(/.*|$)"],
           // Side effect imports.
@@ -30,6 +30,7 @@
         ]
       }
     ],
+    "@typescript-eslint/no-explicit-any": "off",
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": "off"
   }

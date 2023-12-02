@@ -1,7 +1,5 @@
-import addHours from "date-fns/addHours";
 import format from "date-fns/format";
 import getHours from "date-fns/getHours";
-import subHours from "date-fns/subHours";
 import { DropResult } from "react-beautiful-dnd";
 
 export const getReorderedList = ({
@@ -69,4 +67,52 @@ export const isNight = (offset: number) => {
   const hour = getHours(date);
 
   return hour < 6 || hour >= 18;
+};
+
+const removeArticles = (name: string) => {
+  // This list can be dynamically loaded or updated as needed
+  const articles = [
+    "the",
+    "a",
+    "an",
+    "el",
+    "los",
+    "la",
+    "las",
+    "un",
+    "una",
+    "unos",
+    "unas",
+    "le",
+    "les",
+    "des",
+    "du",
+    "de la",
+    "del",
+  ];
+  const words = name.split(/\s+/);
+
+  // Filter out any words that are in the list of articles, case-insensitive
+  const filteredWords = words.filter(
+    (word) => !articles.includes(word.toLowerCase())
+  );
+
+  return filteredWords.join(" ");
+};
+
+export const getInitials = (name: string) => {
+  try {
+    const cleanName = removeArticles(name);
+    const words = cleanName.trim().split(/\s+/);
+
+    if (words.length === 1) {
+      return cleanName.slice(0, 2).toUpperCase();
+    } else if (words.length === 2) {
+      return (words[0][0] + words[1][0]).toUpperCase();
+    }
+    return (words[0][0] + words[words.length - 1][0]).toUpperCase();
+  } catch (error) {
+    console.log(error);
+    return "NA";
+  }
 };

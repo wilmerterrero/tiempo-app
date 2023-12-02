@@ -16,8 +16,13 @@ const useDB = () => {
   const fetchTimezones = async () => {
     try {
       const timezones = (await getAll()) as Timezone[];
-      console.log("Fetched timezones successfully:", timezones);
-      return timezones;
+      const orderedTimezones = timezones.sort((a, b) => {
+        // order by isFavorite first
+        if (a.isFavorite && !b.isFavorite) return -1;
+        if (!a.isFavorite && b.isFavorite) return 1;
+        return 0;
+      });
+      return orderedTimezones;
     } catch (error) {
       console.error("Failed to fetch timezones:", error);
     }

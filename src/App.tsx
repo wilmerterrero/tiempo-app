@@ -1,21 +1,23 @@
-import { initDB } from "react-indexed-db-hook";
+import { useCallback, useEffect, useRef, useState } from "preact/hooks";
 import { invoke } from "@tauri-apps/api";
 import { listen, UnlistenFn } from "@tauri-apps/api/event";
 import debounce from "lodash-es/debounce";
 import isEmpty from "lodash-es/isEmpty";
 import PerfectScrollbar from "perfect-scrollbar";
-import { ChangeEvent } from "preact/compat";
-import { useEffect, useRef, useState } from "preact/hooks";
+import { initDB } from "react-indexed-db-hook";
 
 import { CloseIcon } from "./components/icons/close";
 import { SearchIcon } from "./components/icons/search";
 import { StatusesFooter } from "./components/StatusesFooter";
+import { ONLY_TEXT_REGEX, TextInput } from "./components/TextInput";
 import { TimeTravel } from "./components/TimeTravel";
 import { TimezonesList } from "./components/TimezonesList";
 import { DBConfig } from "./db/config";
 import useDB from "./db/useDB";
+import useLocalStorage from "./hooks/useLocalStorage";
 import useTimezones from "./hooks/useTimezones";
 import { mockTimezones } from "./mocks";
+import { calculateTimeFromOffset, getInitials } from "./utils";
 
 import "perfect-scrollbar/css/perfect-scrollbar.css";
 
@@ -26,6 +28,7 @@ function App() {
   const [searchTerm, setSearchTerm] = useState("");
   // Needed to update the time every minute
   const [_, setTick] = useState(new Date());
+  const [isFirstTime, setIsFirstTime] = useLocalStorage("isFirstTime", true);
 
   const {
     timezones: fetchedTimezones,
@@ -40,14 +43,44 @@ function App() {
   const timezonesListRef = useRef(null);
   const resultsListRef = useRef(null);
 
+  const getFavoriteTimezonesTitle = useCallback(() => {
+    const favorites = timezones.filter((timezone) => timezone.isFavorite);
+    const title = favorites.reduce((acc, curr, index) => {
+      const { name, offSet } = curr;
+      const initials = getInitials(name);
+      const time = calculateTimeFromOffset(offSet);
+      const timeString = `${initials} ${time}`;
+      if (index === 0) {
+        return timeString;
+      }
+      return `${acc} / ${timeString}`;
+    }, "");
+    return title;
+  }, [timezones]);
+
+  const updateMenuTitle = useCallback(() => {
+    const title = getFavoriteTimezonesTitle();
+
+    if (!title) return;
+
+    invoke("update_menu_title", { title }).then(() => {
+      console.log("update_menu_title called succesfully");
+    });
+  }, [getFavoriteTimezonesTitle]);
+
   useEffect(() => {
     const getTimezones = async () => {
       const _timezones = await fetchTimezones();
-      if (isEmpty(_timezones) || !_timezones) {
+      if (isEmpty(_timezones) && isFirstTime) {
+        for (const tz of mockTimezones) {
+          await addTimezone(tz);
+        }
         setTimezones(mockTimezones);
+        setIsFirstTime(false);
         return;
       }
 
+      if (!_timezones) return;
       setTimezones(_timezones);
     };
     getTimezones();
@@ -94,8 +127,13 @@ function App() {
   }, []);
 
   useEffect(() => {
+    updateMenuTitle();
+  }, [timezones, updateMenuTitle]);
+
+  useEffect(() => {
     const updateTime = () => {
       setTick(new Date());
+      updateMenuTitle();
     };
 
     // Calculate delay until the next full minute
@@ -119,15 +157,7 @@ function App() {
     return () => {
       clearTimeout(timeoutId);
     };
-  }, []);
-
-  function changeTitle() {
-    invoke("update_menu_title", { title: "SDQ 7:00 PM / CR 5:00 PM" }).then(
-      () => {
-        console.log("called succesfully");
-      }
-    );
-  }
+  }, [updateMenuTitle]);
 
   const debounceSearch = debounce((value) => {
     setSearchTerm(value);
@@ -138,8 +168,8 @@ function App() {
     cancelSearch();
   };
 
-  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
-    debounceSearch(e.currentTarget.value);
+  const handleSearchChange = (searchValue: string) => {
+    debounceSearch(searchValue);
   };
 
   const handleAddTimezone = async (timezone: Timezone) => {
@@ -150,14 +180,11 @@ function App() {
 
   return (
     <main class="container mx-auto px-2 pt-4 flex flex-col justify-center items-center">
-      <div className="flex-1 w-full px-2">
-        <input
-          type="text"
+      <div className="flex-1 w-full px-2 mb-2">
+        <TextInput
+          mask={ONLY_TEXT_REGEX}
+          onAccept={(value) => handleSearchChange(value)}
           placeholder="Search timezones. Eg: New York"
-          className="input input-bordered border-[#e2e2e2] join-item input-sm w-full mb-2 text-app-primary-color bg-transparent focus:outline-none"
-          value={searchTerm}
-          onChange={handleSearchChange}
-          autoComplete="false"
         />
       </div>
       <button

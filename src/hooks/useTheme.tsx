@@ -1,5 +1,5 @@
-import { appWindow } from "@tauri-apps/api/window";
 import { useEffect, useRef } from "preact/hooks";
+import { appWindow } from "@tauri-apps/api/window";
 
 export const useTheme = () => {
   const theme = useRef("light");

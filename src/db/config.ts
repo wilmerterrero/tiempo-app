@@ -2,7 +2,7 @@ import { IndexedDBProps } from "react-indexed-db-hook";
 
 export const DBConfig: IndexedDBProps = {
   name: "TiempoDB",
-  version: 1,
+  version: 2,
   objectStoresMeta: [
     {
       store: "timezones",
@@ -23,7 +23,7 @@ export const DBConfig: IndexedDBProps = {
           keypath: "isFavorite",
           options: { unique: false },
         },
-        { name: "offSet", keypath: "offSet", options: { unique: true } },
+        { name: "offSet", keypath: "offSet", options: { unique: false } },
         { name: "order", keypath: "order", options: { unique: false } },
       ],
     },
