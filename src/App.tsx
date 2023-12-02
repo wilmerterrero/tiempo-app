@@ -228,14 +228,15 @@ function App() {
       <div className="max-h-56 relative w-full" ref={timezonesListRef}>
         <TimezonesList timezones={timezones} setTimezones={setTimezones} />
       </div>
-      <div className="flex flex-col w-full px-4 divide-y space-y-2 divide-slate-400">
-        <TimeTravel />
-        <div className="flex justify-between pt-4">
-          <p class="text-sm font-medium">Options</p>
-          <p>+</p>
+      <div className="absolute bottom-2 w-full">
+        <div className="flex flex-col px-4 divide-y space-y-2 divide-slate-400">
+          <TimeTravel />
+          <button type="button" className="pt-2">
+            <span class="text-sm font-medium">Preferences...</span>
+          </button>
         </div>
+        <StatusesFooter loading={loading} error={!!error} />
       </div>
-      <StatusesFooter loading={loading} error={!!error} />
     </main>
   );
 }
