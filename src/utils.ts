@@ -55,15 +55,34 @@ const getOffsetTime = (offset: number) => {
   return offsetTime;
 };
 
-export const calculateTimeFromOffset = (offset: number) => {
-  const offsetTime = getOffsetTime(offset);
-  const formattedTime = format(offsetTime, "h:mm a");
+export const calculateTimeFromOffset = ({
+  offset,
+  timeFormat = 12,
+  timeTravel = 0,
+}: {
+  offset: number;
+  timeFormat?: number;
+  timeTravel?: number;
+}) => {
+  const offsetTime = getOffsetTime(offset + timeTravel);
+  const TWELVE_HOURS_FORMAT = "hh:mm aa";
+  const TWENTY_FOUR_HOURS_FORMAT = "HH:mm a";
+  const formattedTime = format(
+    offsetTime,
+    timeFormat === 12 ? TWELVE_HOURS_FORMAT : TWENTY_FOUR_HOURS_FORMAT
+  );
 
   return formattedTime;
 };
 
-export const isNight = (offset: number) => {
-  const date = getOffsetTime(offset);
+export const isNight = ({
+  offset,
+  timeTravel = 0,
+}: {
+  offset: number;
+  timeTravel?: number;
+}) => {
+  const date = getOffsetTime(offset + timeTravel);
   const hour = getHours(date);
 
   return hour < 6 || hour >= 18;

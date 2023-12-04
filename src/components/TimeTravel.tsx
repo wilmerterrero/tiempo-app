@@ -1,24 +1,25 @@
-import { useState } from "preact/hooks";
+import { useEffect, useState } from "preact/hooks";
+import { useLocalStorage } from "usehooks-ts";
 
 export const TimeTravel = () => {
   const [rangeValue, setRangeValue] = useState(50);
+  const [timeTravel, setTimeTravel] = useLocalStorage("timeTravel", 0);
+  const [displayText, setDisplayText] = useState("");
 
-  const calculateHourDifference = () => {
+  useEffect(() => {
     const difference = rangeValue - 50;
-    return difference / 10;
-  };
-
-  const hourDifference = calculateHourDifference();
-  const displayText =
-    hourDifference === 0
-      ? ""
-      : `${hourDifference > 0 ? "+" : ""}${hourDifference} hours`;
+    const hourDifference = difference / 10;
+    setTimeTravel(() => hourDifference);
+    setDisplayText(
+      timeTravel === 0 ? "" : `${timeTravel > 0 ? "+" : ""}${timeTravel} hours`
+    );
+  }, [rangeValue, timeTravel, setTimeTravel]);
 
   return (
     <div className="w-full pb-4">
       <div className="flex justify-between pb-2">
         <p className="text-sm font-medium">Time traveling</p>
-        <p className="text-sm font-medium">{displayText}</p>
+        <p className="text-sm font-medium block">{displayText}</p>
       </div>
       <input
         type="range"

@@ -1,6 +1,7 @@
 import { HTMLAttributes } from "preact/compat";
 import { StateUpdater, useState } from "preact/hooks";
 import debounce from "lodash-es/debounce";
+import { useReadLocalStorage } from "usehooks-ts";
 
 import useDB from "../db/useDB";
 import { calculateTimeFromOffset, isNight } from "../utils";
@@ -28,8 +29,20 @@ export const TimezoneListItem = ({
   const [isHovering, setIsHovering] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
+  const timeFormat = (useReadLocalStorage("timeFormat") as number) ?? 12;
+  const timeTravel = (useReadLocalStorage("timeTravel") as number) ?? 0;
+
   const { deleteTimezone, updateTimezone } = useDB();
 
+  const timeLabel = calculateTimeFromOffset({
+    offset: timezone.offSet,
+    timeFormat,
+    timeTravel,
+  });
+  const isNightTime = isNight({
+    offset: timezone.offSet,
+    timeTravel,
+  });
   const isLightTheme = theme === "light";
 
   const onEditName = async (id: string, name: string) => {
@@ -97,11 +110,10 @@ export const TimezoneListItem = ({
         <div className="flex items-center gap-2">
           <p
             class={`badge badge-sm font-bold ${
-              isNight(timezone.offSet) ? "badge-primary" : "badge-accent"
+              isNightTime ? "badge-primary" : "badge-accent"
             } gap-1`}
           >
-            {isNight(timezone.offSet) ? <Moon /> : <Sun />}{" "}
-            {calculateTimeFromOffset(timezone.offSet)}
+            {isNightTime ? <Moon /> : <Sun />} {timeLabel}
           </p>
           <div className="tooltip tooltip-left" data-tip="Mark as favorite">
             <button

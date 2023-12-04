@@ -6,6 +6,7 @@ import debounce from "lodash-es/debounce";
 import isEmpty from "lodash-es/isEmpty";
 import PerfectScrollbar from "perfect-scrollbar";
 import { initDB } from "react-indexed-db-hook";
+import { useLocalStorage, useReadLocalStorage } from "usehooks-ts";
 
 import { CloseIcon } from "./components/icons/close";
 import { SearchIcon } from "./components/icons/search";
@@ -15,7 +16,7 @@ import { TimeTravel } from "./components/TimeTravel";
 import { TimezonesList } from "./components/TimezonesList";
 import { DBConfig } from "./db/config";
 import useDB from "./db/useDB";
-import useLocalStorage from "./hooks/useLocalStorage";
+import { useAppVersion } from "./hooks/useAppVersion";
 import { useTheme } from "./hooks/useTheme";
 import useTimezones from "./hooks/useTimezones";
 import { mockTimezones } from "./mocks";
@@ -30,7 +31,10 @@ function App() {
   const [searchTerm, setSearchTerm] = useState("");
   // Needed to update the time every minute
   const [_, setTick] = useState(new Date());
+
   const [isFirstTime, setIsFirstTime] = useLocalStorage("isFirstTime", true);
+  const timeFormat = (useReadLocalStorage("timeFormat") as number) ?? 12;
+  const timeTravel = (useReadLocalStorage("timeTravel") as number) ?? 0;
 
   const {
     timezones: fetchedTimezones,
@@ -43,6 +47,7 @@ function App() {
   const { fetchTimezones, addTimezone } = useDB();
 
   const theme = useTheme();
+  const appVersion = useAppVersion();
 
   const timezonesListRef = useRef(null);
   const resultsListRef = useRef(null);
@@ -53,7 +58,11 @@ function App() {
     const title = favorites.reduce((acc, curr, index) => {
       const { name, offSet } = curr;
       const initials = getInitials(name);
-      const time = calculateTimeFromOffset(offSet);
+      const time = calculateTimeFromOffset({
+        offset: offSet,
+        timeFormat,
+        timeTravel,
+      });
       const timeString = `${initials} ${time}`;
       if (index === 0) {
         return timeString;
@@ -61,7 +70,7 @@ function App() {
       return `${acc} / ${timeString}`;
     }, "");
     return title;
-  }, [timezones]);
+  }, [timeFormat, timeTravel, timezones]);
 
   const updateMenuTitle = useCallback(() => {
     const title = getFavoriteTimezonesTitle();
@@ -81,7 +90,7 @@ function App() {
           await addTimezone(tz);
         }
         setTimezones(mockTimezones);
-        setIsFirstTime(false);
+        setIsFirstTime((prev) => !prev);
         return;
       }
 
@@ -272,7 +281,7 @@ function App() {
             >
               <span class="text-sm font-medium">Feedback/Bug report...</span>
             </button>
-            <span class="text-xs font-medium">Version 1.0</span>
+            <span class="text-xs font-medium">Version {appVersion}</span>
           </div>
         </div>
         <StatusesFooter loading={loading} error={!!error} />

@@ -18,7 +18,8 @@
     "preact": "^10.16.0",
     "react-beautiful-dnd": "^13.1.1",
     "react-imask": "7.0.0",
-    "react-indexed-db-hook": "^1.0.14"
+    "react-indexed-db-hook": "^1.0.14",
+    "usehooks-ts": "^2.9.1"
   },
   "devDependencies": {
     "@preact/preset-vite": "^2.5.0",
