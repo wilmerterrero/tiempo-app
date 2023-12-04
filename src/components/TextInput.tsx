@@ -1,6 +1,8 @@
 import { IMaskMixin } from "react-imask";
 
 export const ONLY_TEXT_REGEX = /^[A-Za-z\s\u00C0-\u00FF]*$/;
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 export const TextInput = IMaskMixin(({ inputRef, ...props }) => (
   <input
     type="text"
