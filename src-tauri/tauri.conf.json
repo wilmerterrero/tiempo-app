@@ -38,6 +38,7 @@
         "entitlements": null,
         "exceptionDomain": "",
         "frameworks": [],
+        "minimumSystemVersion": "12.3",
         "providerShortName": null,
         "signingIdentity": null
       },

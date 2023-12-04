@@ -1,7 +1,7 @@
 export const mockTimezones: Timezone[] = [
   {
     id: "1",
-    name: "New York (EDT)",
+    name: "New York",
     timeZone: "America/New_York",
     isFavorite: false,
     offSet: -5,
@@ -9,7 +9,7 @@ export const mockTimezones: Timezone[] = [
   },
   {
     id: "2",
-    name: "London (BST)",
+    name: "London",
     timeZone: "Europe/London",
     isFavorite: false,
     offSet: 1,
