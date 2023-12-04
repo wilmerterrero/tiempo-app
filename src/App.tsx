@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "preact/hooks";
 import { invoke } from "@tauri-apps/api";
 import { listen, UnlistenFn } from "@tauri-apps/api/event";
+import { WebviewWindow } from "@tauri-apps/api/window";
 import debounce from "lodash-es/debounce";
 import isEmpty from "lodash-es/isEmpty";
 import PerfectScrollbar from "perfect-scrollbar";
@@ -15,6 +16,7 @@ import { TimezonesList } from "./components/TimezonesList";
 import { DBConfig } from "./db/config";
 import useDB from "./db/useDB";
 import useLocalStorage from "./hooks/useLocalStorage";
+import { useTheme } from "./hooks/useTheme";
 import useTimezones from "./hooks/useTimezones";
 import { mockTimezones } from "./mocks";
 import { calculateTimeFromOffset, getInitials } from "./utils";
@@ -39,6 +41,8 @@ function App() {
   } = useTimezones(searchTerm);
 
   const { fetchTimezones, addTimezone } = useDB();
+
+  const theme = useTheme();
 
   const timezonesListRef = useRef(null);
   const resultsListRef = useRef(null);
@@ -180,6 +184,26 @@ function App() {
     setTimezones((prev) => [...prev, timezone]);
   };
 
+  const handleOpenWindow = (name: string, path: string) => {
+    const randomId = Date.now();
+    const webview = new WebviewWindow(`${name}-${randomId}`, {
+      url: `${path}?theme=${theme}`,
+      title: name,
+      height: 450,
+      width: 450,
+      resizable: false,
+      maximizable: false,
+      fullscreen: false,
+    });
+
+    webview.once("tauri://created", () => {
+      console.log("webview window created");
+    });
+    webview.once("tauri://error", (e) => {
+      console.log("webview window error", e);
+    });
+  };
+
   return (
     <main class="container mx-auto px-2 pt-4 flex flex-col justify-center items-center">
       <div className="flex-1 w-full px-2 mb-2">
@@ -231,9 +255,25 @@ function App() {
       <div className="absolute bottom-2 w-full">
         <div className="flex flex-col px-4 divide-y space-y-2 divide-slate-400">
           <TimeTravel />
-          <button type="button" className="pt-2">
-            <span class="text-sm font-medium">Preferences...</span>
-          </button>
+          <div className="flex justify-between items-center pt-2">
+            <button
+              type="button"
+              onClick={() =>
+                handleOpenWindow("Preferences", "extras/preferences/index.html")
+              }
+            >
+              <span class="text-sm font-medium">Preferences...</span>
+            </button>
+            <button
+              type="button"
+              onClick={() =>
+                handleOpenWindow("Feedback", "extras/feedback/index.html")
+              }
+            >
+              <span class="text-sm font-medium">Feedback/Bug report...</span>
+            </button>
+            <span class="text-xs font-medium">Version 1.0</span>
+          </div>
         </div>
         <StatusesFooter loading={loading} error={!!error} />
       </div>

@@ -8,14 +8,10 @@ export default function useLocalStorage<T>(
   // We will use this flag to trigger the reading from localStorage
   const [firstLoadDone, setFirstLoadDone] = useState(false);
 
-  // Use an effect hook in order to prevent SSR inconsistencies and errors.
   // This will update the state with the value from the local storage after
   // the first initial value is applied.
   useEffect(() => {
     const fromLocal = () => {
-      if (typeof window === "undefined") {
-        return initialValue;
-      }
       try {
         const item = window.localStorage.getItem(key);
         return item ? (JSON.parse(item) as T) : initialValue;
@@ -41,9 +37,7 @@ export default function useLocalStorage<T>(
     }
 
     try {
-      if (typeof window !== "undefined") {
-        window.localStorage.setItem(key, JSON.stringify(storedValue));
-      }
+      window.localStorage.setItem(key, JSON.stringify(storedValue));
     } catch (error) {
       console.log(error);
     }

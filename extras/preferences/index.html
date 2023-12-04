@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <style>
+      :root {
+        /* Dark theme variables */
+        --dark-background: #1e1e1e;
+        --dark-fontPrimary: #e2e2e2;
+
+        /* Light theme variables */
+        --light-background: #ffffff;
+        --light-fontPrimary: #333333;
+
+        /* Set default styles */
+        font-synthesis: none;
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        -webkit-text-size-adjust: 100%;
+      }
+
+      html {
+        overflow: hidden;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+        font-size: 16px;
+        line-height: 1.5;
+        padding-left: 2rem;
+        padding-right: 2rem;
+        padding-top: 1rem;
+      }
+
+      body[data-theme="dark"] {
+        background-color: var(--dark-background);
+        color: var(--dark-fontPrimary);
+      }
+
+      body[data-theme="light"] {
+        background-color: var(--light-background);
+        color: var(--light-fontPrimary);
+      }
+
+      h1 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 0;
+        margin-bottom: 1rem;
+      }
+
+      .label {
+        display: inline-block;
+        margin-bottom: 0.5rem;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body data-theme="dark">
+    <h1>Preferences</h1>
+    <!-- Time format -->
+    <div>
+      <label for="timeFormat12" class="label">Time format:</label>
+      <input type="radio" id="timeFormat12" name="timeFormat" value="12" />
+      <label for="timeFormat12">12-hour</label>
+      <input type="radio" id="timeFormat24" name="timeFormat" value="24" />
+      <label for="timeFormat24">24-hour</label>
+    </div>
+    <!-- Open at login -->
+    <div>
+      <label for="openAtLogin" class="label">Open at login:</label>
+      <input type="checkbox" id="openAtLogin" />
+    </div>
+
+    <script>
+      const theme =
+        new URLSearchParams(window.location.search).get("theme") || "dark";
+      document.body.setAttribute("data-theme", theme);
+
+      // ---------------------------------------- //
+      const timeFormatRadios = document.querySelectorAll(
+        'input[name="timeFormat"]'
+      );
+      const openAtLogin = document.getElementById("openAtLogin");
+
+      // Set the initial values for time format
+      const savedTimeFormat = localStorage.getItem("timeFormat") || "12";
+      timeFormatRadios.forEach((radio) => {
+        if (radio.value === savedTimeFormat) {
+          radio.checked = true;
+        }
+      });
+
+      // Set the initial value for open at login
+      openAtLogin.checked = localStorage.getItem("openAtLogin") === "true";
+
+      // Event listener for time format change
+      timeFormatRadios.forEach((radio) =>
+        radio.addEventListener("change", (event) => {
+          localStorage.setItem("timeFormat", event.target.value);
+        })
+      );
+
+      // Event listener for open at login change
+      openAtLogin.addEventListener("change", (event) => {
+        localStorage.setItem("openAtLogin", event.target.checked);
+      });
+      // ---------------------------------------- //
+    </script>
+  </body>
+</html>
