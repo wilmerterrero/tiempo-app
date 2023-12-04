@@ -1,6 +1,8 @@
-# Tauri + Preact + Typescript
+# Tiempo app
 
-This template should help get you started developing with Tauri, Preact and Typescript in Vite.
+![Tiempo app](./banner.png)
+
+Made with Tauri, Preact and Typescript in Vite.
 
 ## Recommended IDE Setup
 

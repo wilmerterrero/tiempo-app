@@ -26,6 +26,7 @@
       },
       "externalBin": [],
       "icon": [
+        "dmg-icon.icns",
         "icons/32x32.png",
         "icons/128x128.png",
         "icons/128x128@2x.png",
@@ -43,15 +44,11 @@
         "signingIdentity": null
       },
       "resources": [
-        "resources/**/*"
+        "resources/**/*",
+        "../extras/**/*"
       ],
       "shortDescription": "",
-      "targets": "all",
-      "windows": {
-        "certificateThumbprint": null,
-        "digestAlgorithm": "sha256",
-        "timestampUrl": ""
-      }
+      "targets": "dmg"
     },
     "security": {
       "csp": null
