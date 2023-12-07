@@ -4,12 +4,20 @@
 )]
 
 use log::info;
-use tauri::{Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, Window, WindowEvent};
+use tauri::{
+    CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, Window, WindowEvent,
+};
 use tauri_plugin_positioner::{Position, WindowExt};
 use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial};
 
 fn main() {
-    let system_tray_menu = SystemTrayMenu::new();
+    let quit_menu_item = CustomMenuItem::new("quit".to_string(), "Quit").accelerator("Cmd+Q");
+    let hide_menu_item = CustomMenuItem::new("hide".to_string(), "Hide").accelerator("Cmd+H");
+    let help_menu_item = CustomMenuItem::new("help".to_string(), "Help (?)").accelerator("Shift+H");
+    let system_tray_menu = SystemTrayMenu::new()
+        .add_item(help_menu_item)
+        .add_item(hide_menu_item)
+        .add_item(quit_menu_item);
     tauri::Builder::default()
         .setup(|app| Ok(app.set_activation_policy(tauri::ActivationPolicy::Accessory)))
         .plugin(tauri_plugin_positioner::init())
@@ -30,13 +38,6 @@ fn main() {
                 } => {
                     open_menu(app);
                 }
-                SystemTrayEvent::RightClick {
-                    position: _,
-                    size: _,
-                    ..
-                } => {
-                    open_menu(app);
-                }
                 SystemTrayEvent::DoubleClick {
                     position: _,
                     size: _,
@@ -51,6 +52,12 @@ fn main() {
                     "hide" => {
                         let window = app.get_window("main").unwrap();
                         window.hide().unwrap();
+                    }
+                    "help" => {
+                        tauri::api::process::Command::new("open")
+                            .args(vec!["https://wilmerterrero.notion.site/Tiempo-Manage-Timezones-Help-Center-V2-f3ce07638b2f4e459bd1aadbb4ed2120"])
+                            .spawn()
+                            .expect("Failed to open help page");
                     }
                     _ => {}
                 },

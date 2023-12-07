@@ -4,6 +4,7 @@ version = "2.0.0"
 description = "Menubar timezones manager"
 authors = ["wilmerterrero"]
 license = ""
+edition = "2021"
 repository = "https://github.com/wilmerterrero/tiempo-app"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -16,7 +17,7 @@ serde_json = "1.0"
 log = "^0.4"
 tauri-plugin-log = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
 serde = { version = "1.0", features = ["derive"] }
-tauri = { version = "1.5", features = [ "macos-private-api", "system-tray", "shell-open", "icon-png"] }
+tauri = { version = "1.5", features = [ "updater", "macos-private-api", "system-tray", "shell-open", "icon-png"] }
 tauri-plugin-positioner = { version = "1.0.4", features = ["system-tray"] }
 reqwest = { version = "0.11", features = ["json"] }
 window-vibrancy = "0.4.3"
