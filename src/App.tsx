@@ -75,8 +75,6 @@ function App() {
   const updateMenuTitle = useCallback(() => {
     const title = getFavoriteTimezonesTitle();
 
-    if (!title) return;
-
     invoke("update_menu_title", { title }).then(() => {
       console.log("update_menu_title called succesfully");
     });
@@ -271,7 +269,7 @@ function App() {
       </div>
       <div className="absolute bottom-2 w-full">
         <div className="flex flex-col px-4 divide-y space-y-2 divide-slate-400">
-          <TimeTravel />
+          {timezones.length > 0 ? <TimeTravel /> : null}
           <div className="flex justify-between items-center pt-2">
             <button
               type="button"

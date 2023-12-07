@@ -22,14 +22,20 @@ export const TimezonesList = ({
   });
   return (
     <ul class="px-1 flex-1 h-56">
-      {orderedTimezones.map((timezone) => (
-        <TimezoneListItem
-          key={timezone.id}
-          timezone={timezone}
-          theme={theme}
-          setTimezones={setTimezones}
-        />
-      ))}
+      {orderedTimezones.length > 0 ? (
+        orderedTimezones.map((timezone) => (
+          <TimezoneListItem
+            key={timezone.id}
+            timezone={timezone}
+            theme={theme}
+            setTimezones={setTimezones}
+          />
+        ))
+      ) : (
+        <li class="text-center text-sm font-medium text-gray-400 p-2">
+          No timezones added yet.
+        </li>
+      )}
     </ul>
   );
 };

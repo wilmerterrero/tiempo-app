@@ -124,6 +124,15 @@ async fn fetch_timezones(query: String) -> Result<String, String> {
 
 #[tauri::command]
 fn update_menu_title(app: tauri::AppHandle, title: &str) {
+    if title == "" {
+        app.tray_handle()
+            .set_icon(tauri::Icon::Raw(
+                include_bytes!("../icons/icon.png").to_vec(),
+            ))
+            .unwrap();
+        app.tray_handle().set_title("").unwrap();
+        return;
+    }
     app.tray_handle()
         .set_icon(tauri::Icon::Raw(
             include_bytes!("../resources/empty.png").to_vec(),
