@@ -1,11 +1,10 @@
 [package]
-name = "tiempo-app"
-version = "0.0.0"
-description = "A Tauri App"
-authors = ["you"]
+name = "Tiempo"
+version = "2.0.0"
+description = "Menubar timezones manager"
+authors = ["wilmerterrero"]
 license = ""
-repository = ""
-edition = "2021"
+repository = "https://github.com/wilmerterrero/tiempo-app"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

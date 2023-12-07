@@ -213,8 +213,16 @@ function App() {
     });
   };
 
+  const handleOnContextMenu = () => {
+    if (import.meta.env.DEV) return true;
+    return false;
+  };
+
   return (
-    <main class="container mx-auto px-2 pt-4 flex flex-col justify-center items-center">
+    <main
+      class="container mx-auto px-2 pt-4 flex flex-col justify-center items-center"
+      onContextMenu={handleOnContextMenu}
+    >
       <div className="flex-1 w-full px-2 mb-2">
         <TextInput
           inputRef={inputSearchRef}
