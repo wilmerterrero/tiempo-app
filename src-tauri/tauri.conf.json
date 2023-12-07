@@ -20,11 +20,10 @@
     "bundle": {
       "active": true,
       "category": "Productivity",
-      "copyright": "",
-      "deb": {
-        "depends": []
-      },
-      "externalBin": [],
+      "identifier": "com.wilmerterrero.Tiempo",
+      "longDescription": "Tiempo is a simple menubar to manage your friends timezones",
+      "shortDescription": "Timezones menu bar app",
+      "copyright": "Copyright (c) Wilmer Terrero 2022",
       "icon": [
         "icons/32x32.png",
         "icons/128x128.png",
@@ -32,22 +31,19 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.wilmerterrero.Tiempo",
-      "longDescription": "",
+      "targets": "all",
       "macOS": {
         "entitlements": null,
         "exceptionDomain": "",
         "frameworks": [],
         "minimumSystemVersion": "12.3",
         "providerShortName": null,
-        "signingIdentity": null
+        "signingIdentity": "Wilmer Terrero"
       },
       "resources": [
         "resources/**/*",
         "../extras/**/*"
-      ],
-      "shortDescription": "",
-      "targets": "dmg"
+      ]
     },
     "security": {
       "csp": null
