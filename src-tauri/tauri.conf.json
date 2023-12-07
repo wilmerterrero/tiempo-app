@@ -54,11 +54,11 @@
     },
     "updater": {
       "active": true,
-      "endpoints": [
-        "https://github.com/wilmerterrero/tiempo-app/releases/{{target}}/{{arch}}/{{current_version}}"
-      ],
       "dialog": true,
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDUyOUE4QjlFQjM3NjI0NDAKUldSQUpIYXpub3VhVXZtT2xheWZWSGJFT2JFbVRsQnYwZG5yOUxBUXNxc3VCR24xcm8rRjgyVDkK%"
+      "endpoints": [
+        "https://gist.githubusercontent.com/wilmerterrero/e1307e27e7e316454cad01f449e91d47/raw/latest.json"
+      ],
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IERBNTI2REYyMDhERERCREYKUldUZjI5MEk4bTFTMmw1L2FsSlJIV01aUk1SRkdXWkNEMVNVemZtcWU0UXpRV2VxK2dkb0xzakIK"
     },
     "macOSPrivateApi": true,
     "windows": [
