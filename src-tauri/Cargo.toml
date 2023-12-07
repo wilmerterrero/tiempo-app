@@ -1,5 +1,5 @@
 [package]
-name = "Tiempo"
+name = "tiempo"
 version = "2.0.0"
 description = "Menubar timezones manager"
 authors = ["wilmerterrero"]
