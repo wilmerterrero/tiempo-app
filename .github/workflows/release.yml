@@ -64,7 +64,7 @@ jobs:
         with:
           tagName: Tiempo-v__VERSION__
           releaseName: "Tiempo new release: v__VERSION__"
-          releaseBody: "See the assets to download and install this version."
+          releaseBody: "New updates, bug fixes and improvements."
           args: ${{ matrix.target && format('--target {0}', matrix.target) }}
 
       - name: Update JSON updater file
